@@ -8,7 +8,8 @@ An interactive web app built to test 12 weeks of educational curriculum, featuri
 
 A responsive, front-end quiz application built to test 12 weeks of educational curriculum on Sustainable Development. Featuring dynamic JSON data parsing, local state management, and instant UI feedback.
 
-**[🔴 Live Demo: Click Here to Play](https://chirag11365.github.io/mooc-quiz/)** *(Make sure you save the file!)*
+**[🔴 Live Demo: Click Here to Play](https://chirag11365.github.io/mooc-quiz/)** 
+or <a>https://bit.ly/mooc-quiz</a> 
 
 ## ✨ Features
 
