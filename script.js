@@ -284,9 +284,22 @@ const elements = {
     homeBtn: document.getElementById('home-btn')
 };
 
+// Helper function to remove cite tags, remove "A.", "B." prefixes, and trim spaces
 function cleanText(text) {
     if (!text) return '';
-    return text.replace(/\[cite[^\]]*\]/gi, '').trim();
+    return text
+        .replace(/\[cite[^\]]*\]/gi, '') // Removes citations
+        .replace(/^[A-D]\.\s*/i, '')     // Removes "A. ", "B. ", etc. at the start
+        .trim();
+}
+
+// Helper function to shuffle an array (Fisher-Yates algorithm)
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+    }
+    return array;
 }
 // Dark Mode Toggle
 elements.themeToggle.addEventListener('click', () => {
@@ -311,21 +324,34 @@ function showView(viewName) {
 }
 
 // Start Quiz Logic
+// Start Quiz Logic (Updated to shuffle options)
 function initializeQuiz(mode) {
+    let selectedQuestions = [];
+
+    // 1. Gather the right questions based on the mode
     if (mode === 'all') {
-        currentQuiz = [...quizData];
+        selectedQuestions = [...quizData];
     } else if (mode === 'random') {
         const shuffled = [...quizData].sort(() => 0.5 - Math.random());
-        currentQuiz = shuffled.slice(0, 20); // 20 random questions
+        selectedQuestions = shuffled.slice(0, 20); 
     } else {
-        currentQuiz = quizData.filter(q => q.week === mode);
+        selectedQuestions = quizData.filter(q => q.week === mode);
     }
     
-    if (currentQuiz.length === 0) {
+    if (selectedQuestions.length === 0) {
         alert("No questions found for this selection.");
         return;
     }
 
+    // 2. Create a deep copy so we don't permanently alter the main database
+    currentQuiz = JSON.parse(JSON.stringify(selectedQuestions));
+
+    // 3. Shuffle the options for every question in this session
+    currentQuiz.forEach(q => {
+        q.options = shuffleArray(q.options);
+    });
+
+    // 4. Reset states and start
     currentQuestionIndex = 0;
     userAnswers = {};
     startTime = Date.now();
