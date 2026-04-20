@@ -284,6 +284,10 @@ const elements = {
     homeBtn: document.getElementById('home-btn')
 };
 
+function cleanText(text) {
+    if (!text) return '';
+    return text.replace(/\[cite[^\]]*\]/gi, '').trim();
+}
 // Dark Mode Toggle
 elements.themeToggle.addEventListener('click', () => {
     document.body.classList.toggle('dark-mode');
@@ -369,38 +373,42 @@ function startTimer() {
 
 // Load Question
 // Load Question (Updated for instant colors)
+// Load Question (Updated with aggressive text cleaning)
 function loadQuestion() {
     const qData = currentQuiz[currentQuestionIndex];
     
-    // Update Text & Badges
-    elements.questionText.innerText = qData.question.replace(/\*\]/g, ''); 
+    // Clean the text before showing it
+    elements.questionText.innerText = cleanText(qData.question); 
     elements.weekBadge.innerText = qData.week;
     
-    // Update Progress
     elements.progressText.innerText = `Question ${currentQuestionIndex + 1} of ${currentQuiz.length}`;
     elements.progressFill.style.width = `${((currentQuestionIndex + 1) / currentQuiz.length) * 100}%`;
     
-    // Update Options
     elements.optionsContainer.innerHTML = '';
+    
+    // Clean the correct answer for accurate matching
+    const cleanCorrectAnswer = cleanText(qData.correctAnswer);
+
     qData.options.forEach(opt => {
+        const cleanOpt = cleanText(opt); // Clean the option text
         const btn = document.createElement('button');
         btn.classList.add('option-btn');
-        btn.innerText = opt.replace(/\*\]/g, ''); 
+        btn.innerText = cleanOpt; 
         
-        // Check if user already answered this question to restore the color
-        if (userAnswers[currentQuestionIndex] === opt) {
-            if (opt === qData.correctAnswer) {
+        // Check if user already answered this to restore red/green color
+        if (userAnswers[currentQuestionIndex] === cleanOpt) {
+            if (cleanOpt === cleanCorrectAnswer) {
                 btn.classList.add('correct-instant');
             } else {
                 btn.classList.add('wrong-instant');
             }
         }
         
-        btn.addEventListener('click', () => selectOption(opt, btn));
+        // Pass the cleaned text to the selection function
+        btn.addEventListener('click', () => selectOption(cleanOpt, btn, cleanCorrectAnswer));
         elements.optionsContainer.appendChild(btn);
     });
     
-    // Update Controls
     elements.prevBtn.disabled = currentQuestionIndex === 0;
     
     if (currentQuestionIndex === currentQuiz.length - 1) {
@@ -412,18 +420,15 @@ function loadQuestion() {
     }
 }
 
-// Select Option (Updated to check correct/wrong instantly)
-function selectOption(selectedOpt, btnElement) {
+// Select Option (Updated to use the cleaned text for comparison)
+function selectOption(selectedOpt, btnElement, cleanCorrectAnswer) {
     userAnswers[currentQuestionIndex] = selectedOpt;
-    const qData = currentQuiz[currentQuestionIndex];
     
-    // Remove previous selection states from all buttons
     Array.from(elements.optionsContainer.children).forEach(btn => {
         btn.classList.remove('selected', 'correct-instant', 'wrong-instant');
     });
     
-    // Check if the selected option is correct or wrong and apply color
-    if (selectedOpt === qData.correctAnswer) {
+    if (selectedOpt === cleanCorrectAnswer) {
         btnElement.classList.add('correct-instant');
     } else {
         btnElement.classList.add('wrong-instant');
@@ -469,29 +474,31 @@ function saveState(elapsedTime = 0) {
 }
 
 // Submit Quiz
+// Submit Quiz (Updated to calculate score accurately with cleaned text)
 elements.submitBtn.addEventListener('click', () => {
     clearInterval(timerInterval);
-    localStorage.removeItem('esdQuizState'); // Clear session
+    localStorage.removeItem('esdQuizState'); 
     
     let score = 0;
     elements.reviewContainer.innerHTML = '';
     
     currentQuiz.forEach((q, index) => {
         const userAns = userAnswers[index];
-        const isCorrect = userAns === q.correctAnswer;
+        const cleanCorrect = cleanText(q.correctAnswer);
+        const isCorrect = userAns === cleanCorrect;
+        
         if (isCorrect) score++;
         
-        // Build review UI
-        const cleanQuestion = q.question.replace(/\*\]/g, '');
-        const cleanCorrect = q.correctAnswer.replace(/\*\]/g, '');
-        const cleanUser = userAns ? userAns.replace(/\*\]/g, '') : 'Not Attempted';
+        const cleanQuestion = cleanText(q.question);
+        const cleanUser = userAns ? userAns : 'Not Attempted';
+        const cleanExp = cleanText(q.explanation);
         
         const reviewHTML = `
             <div class="review-item">
                 <h4>${index + 1}. ${cleanQuestion} (${q.week})</h4>
                 <p>Your Answer: <span class="${isCorrect ? 'correct-ans' : 'wrong-ans'}">${cleanUser}</span></p>
                 ${!isCorrect ? `<p>Correct Answer: <span class="correct-ans">${cleanCorrect}</span></p>` : ''}
-                <p class="explanation">Explanation: ${q.explanation.replace(/\*\]/g, '')}</p>
+                <p class="explanation">Explanation: ${cleanExp}</p>
             </div>
         `;
         elements.reviewContainer.innerHTML += reviewHTML;
