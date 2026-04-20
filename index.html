@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sustainable Development Quiz</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Sustainable Development Quiz</h1>
+            <button id="theme-toggle" class="btn outline">Toggle Dark Mode</button>
+        </header>
+
+        <div id="home-view" class="view active">
+            <h2>Select Quiz Mode</h2>
+            <div class="mode-selection">
+                <select id="week-selector">
+                    <option value="all">Full Syllabus Mock Test</option>
+                    <option value="random">Random 20 Questions Generator</option>
+                    <option value="Week 1">Week 1</option>
+                    <option value="Week 2">Week 2</option>
+                    <option value="Week 3">Week 3</option>
+                    <option value="Week 4">Week 4</option>
+                    <option value="Week 5">Week 5</option>
+                    <option value="Week 6">Week 6</option>
+                    <option value="Week 7">Week 7</option>
+                    <option value="Week 8">Week 8</option>
+                    <option value="Week 9">Week 9</option>
+                    <option value="Week 10">Week 10</option>
+                    <option value="Week 11">Week 11</option>
+                    <option value="Week 12">Week 12</option>
+                </select>
+                <button id="start-btn" class="btn primary">Start Quiz</button>
+            </div>
+            
+            <div id="resume-container" style="display: none; margin-top: 20px;">
+                <p>You have a saved session.</p>
+                <button id="resume-btn" class="btn secondary">Resume Previous Quiz</button>
+            </div>
+        </div>
+
+        <div id="quiz-view" class="view">
+            <div class="quiz-header">
+                <span id="progress-text">Question 1 of X</span>
+                <span id="timer-text">Time: 00:00</span>
+            </div>
+            <div class="progress-bar">
+                <div id="progress-fill"></div>
+            </div>
+
+            <div class="question-container">
+                <h3 id="question-text">Question text goes here?</h3>
+                <span id="week-badge" class="badge">Week X</span>
+                
+                <div id="options-container" class="options">
+                    </div>
+            </div>
+
+            <div class="controls">
+                <button id="prev-btn" class="btn secondary" disabled>Previous</button>
+                <button id="review-btn" class="btn outline">Mark for Review</button>
+                <button id="next-btn" class="btn primary">Next</button>
+                <button id="submit-btn" class="btn danger" style="display: none;">Submit Quiz</button>
+            </div>
+        </div>
+
+        <div id="result-view" class="view">
+            <h2>Quiz Results</h2>
+            <div class="score-card">
+                <h3>Your Score: <span id="score-text">0/0</span></h3>
+            </div>
+            <div id="review-container" class="review-section">
+                </div>
+            <button id="home-btn" class="btn primary mt-20">Back to Home</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
