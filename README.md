@@ -30,6 +30,6 @@ To run this project locally, simply clone the repository and open the HTML file.
 git clone [https://github.com/YOUR-USERNAME/mooc-quiz.git](https://github.com/chirag11365/mooc-quiz.git)
 
 # Navigate into the project directory
-cd esd-sustainability-quiz
+cd mooc-quiz
 
 # Open index.html in your default browser
